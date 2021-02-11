@@ -7,28 +7,39 @@ services:
                         - MYSQL_DATABASE=seenit
                 volumes:
                         - seenitdb:/var/lib/mysql
-       
+                networks:
+                        - backend-db
+
         client:
                 image: seenit-client
                 build: 
                         context: ./client
                         args: 
-                         - REACT_APP_API_BASE_URL=http://server:8080
+                         - REACT_APP_API_BASE_URL=/services
                 ports: 
                         - "5050:80"
                 restart: always
                 depends_on:
                         - server
-
+                networks:
+                        - frontend
+                        - backend
+                          
         server:
                 image: seenit-server
+                environment:
+                        SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/seenit?allowPublicKeyRetrieval=true&useSSL=false
                 build: ./server
-                ports:
-                        - "8081:8080"
                 restart: always
                 depends_on:
                         - mysqldb
-                environment:
-                        SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/seenit?allowPublicKeyRetrieval=true&useSSL=false
+                networks:
+                        - backend
+                        - backend-db
 volumes:
         seenitdb:
+
+networks:
+        frontend:
+        backend:
+        backend-db:

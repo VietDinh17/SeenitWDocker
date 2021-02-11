@@ -3,21 +3,7 @@ import { ACCESS_TOKEN, API_BASE_URL } from '../constants';
 let baseUrl = API_BASE_URL;
 
 async function get(endpoint, token = null) {
-    let options = {
-        method: 'GET',
-        
-    };
-    const headers = new Headers({
-        'Content-Type': 'application/json',
-    })
-
-    if(localStorage.getItem(ACCESS_TOKEN)) {
-        headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
-    }
-    const defaults = {headers: headers};
-    options = Object.assign({}, defaults, options);
-
-    const response = await fetch(`${baseUrl}/${endpoint}`, options);
+    const response = await fetch(`${baseUrl}/${endpoint}`);
     const json = await response.json();
 
     if (!response.ok) throw Error(json.message);
